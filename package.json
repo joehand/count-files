@@ -1,0 +1,15 @@
+{
+  "name": "count-files",
+  "version": "1.0.0",
+  "description": "count files in a directory recursively",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && echo 'no test specified'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/joehand/count-files.git"
+  },
+  "author": "Joe Hand <joe@joeahand.com> (http://joeahand.com/)",
+  "license": "ISC"
+}
