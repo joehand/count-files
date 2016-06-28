@@ -6,7 +6,8 @@ module.exports = countFiles
 function countFiles (dir, opts, cb) {
   if (typeof (opts) === 'function') return countFiles(dir, null, opts)
 
-  var filter = opts && opts.filter || function (filename) { return true }
+  if (!opts) opts = {}
+  var filter = opts.filter || function (filename) { return true }
   var count = {
     files: 0,
     dirs: 0,
@@ -28,10 +29,17 @@ function countFiles (dir, opts, cb) {
       }
 
       fs.stat(filePath, function (err, stats) {
-        if (err) return cb(err)
+        if (err && err.code === 'ENOENT') {
+          // symlinks
+          pending -= 1
+          if (!pending) return cb(null, count)
+          return
+        } else if (err) {
+          cb(err)
+        }
         if (stats.isDirectory()) {
           count.dirs += 1
-          countFiles(filePath, function (err, res) {
+          countFiles(filePath, opts, function (err, res) {
             if (err) return cb(err)
             count.dirs += res.dirs
             count.files += res.files
