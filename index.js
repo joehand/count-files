@@ -4,7 +4,7 @@ var path = require('path')
 module.exports = countFiles
 
 function countFiles (dir, opts, cb) {
-  if (typeof(opts) === 'function') return countFiles(dir, null, opts)
+  if (typeof (opts) === 'function') return countFiles(dir, null, opts)
 
   var filter = opts && opts.filter || function (filename) { return true }
   var count = {
