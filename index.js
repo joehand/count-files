@@ -1,57 +1,41 @@
 var fs = require('fs')
 var path = require('path')
 
-module.exports = countFiles
+module.exports = count
 
-function countFiles (dir, opts, cb) {
-  if (typeof (opts) === 'function') return countFiles(dir, null, opts)
-
-  if (!opts) opts = {}
-  var filter = opts.filter || function (filename) { return true }
-  var count = {
+function count (dir, opts, cb) {
+  if (typeof opts === 'function') return count(dir, {}, opts)
+  opts = opts || {}
+  if (!opts.ignore) opts.ignore = function () { return false }
+  var totalStats = {
     files: 0,
     dirs: 0,
-    bytes: 0
+    size: 0
   }
-
-  fs.readdir(dir, function (err, files) {
+  fs.readdir(dir, function(err, list) {
     if (err) return cb(err)
-    var pending = files.length
-    if (!pending) return cb(null, count)
-
-    files.forEach(function (file) {
-      var filePath = path.join(dir, file)
-
-      if (!filter(filePath)) {
-        pending -= 1
-        if (!pending) return cb(null, count)
+    // list = list.filter(ignore) seems a bit slower and makes API weird (b/c we need ignore = true)
+    var pending = list.length
+    if (!pending) return cb(null, totalStats)
+    list.forEach(function(file) {
+      file = path.resolve(dir, file)
+      if (opts.ignore(file)) {
+        if (!--pending) cb(null, totalStats)
         return
       }
-
-      fs.stat(filePath, function (err, stats) {
-        if (err && err.code === 'ENOENT') {
-          // symlinks
-          pending -= 1
-          if (!pending) return cb(null, count)
-          return
-        } else if (err) {
-          cb(err)
-        }
-        if (stats.isDirectory()) {
-          count.dirs += 1
-          countFiles(filePath, opts, function (err, res) {
-            if (err) return cb(err)
-            count.dirs += res.dirs
-            count.files += res.files
-            count.bytes += res.bytes
-            pending -= 1
-            if (!pending) return cb(null, count)
+      fs.stat(file, function(err, stat) {
+        if (stat && stat.isDirectory()) {
+          totalStats.dirs++
+          count(file, opts, function(err, stats) {
+            totalStats.files += stats.files
+            totalStats.dirs += stats.dirs
+            totalStats.size += stats.size
+            if (!--pending) cb(null, totalStats)
           })
         } else {
-          count.files += 1
-          count.bytes += stats.size
-          pending -= 1
-          if (!pending) return cb(null, count)
+          totalStats.files++
+          if (stat) totalStats.size += stat.size
+          if (!--pending) cb(null, totalStats)
         }
       })
     })
