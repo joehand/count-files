@@ -9,20 +9,18 @@ Ignore files in the count.
 ```javascript
 var countFiles = require('count-files')
 
-countFiles(dir, function (err, stats) {
-    // use stats
+var stats = countFiles(dir, function (err, stats) {
+  console.log('done counting')
 })
 
-stats = {
-  files: 100,
-  dirs: 20,
-  bytes: 234213
-}
+setInterval(function () {
+  console.log('current count', count)
+}, 500)
 ```
 
 ## API
 
-### countFiles(dir, [opts], cb) { }
+### var stats = countFiles(dir, [opts], cb) { }
 
 Callback returns a stats object: `{files, dirs, bytes}`.
 

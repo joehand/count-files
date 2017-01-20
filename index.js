@@ -40,4 +40,6 @@ function count (dir, opts, cb) {
       })
     })
   })
+
+  return totalStats
 }
