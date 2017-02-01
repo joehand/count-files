@@ -10,31 +10,33 @@ function count (dir, opts, cb) {
   var totalStats = {
     files: 0,
     dirs: 0,
-    size: 0
+    bytes: 0
   }
-  fs.readdir(dir, function(err, list) {
+  fs.readdir(dir, function (err, list) {
     if (err) return cb(err)
     // list = list.filter(ignore) seems a bit slower and makes API weird (b/c we need ignore = true)
     var pending = list.length
     if (!pending) return cb(null, totalStats)
-    list.forEach(function(file) {
+    list.forEach(function (file) {
       file = path.resolve(dir, file)
       if (opts.ignore(file)) {
         if (!--pending) cb(null, totalStats)
         return
       }
-      fs.stat(file, function(err, stat) {
+      fs.stat(file, function (err, stat) {
+        if (err) return cb(err)
         if (stat && stat.isDirectory()) {
           totalStats.dirs++
-          count(file, opts, function(err, stats) {
+          count(file, opts, function (err, stats) {
+            if (err) return cb(err)
             totalStats.files += stats.files
             totalStats.dirs += stats.dirs
-            totalStats.size += stats.size
+            totalStats.bytes += stats.size
             if (!--pending) cb(null, totalStats)
           })
         } else {
           totalStats.files++
-          if (stat) totalStats.size += stat.size
+          if (stat) totalStats.bytes += stat.size
           if (!--pending) cb(null, totalStats)
         }
       })
