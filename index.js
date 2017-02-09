@@ -31,7 +31,7 @@ function count (dir, opts, cb) {
             if (err) return cb(err)
             totalStats.files += stats.files
             totalStats.dirs += stats.dirs
-            totalStats.bytes += stats.size
+            totalStats.bytes += stats.bytes
             if (!--pending) cb(null, totalStats)
           })
         } else {
