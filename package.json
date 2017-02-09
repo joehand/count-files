@@ -7,7 +7,8 @@
     "count-files": "cli.js"
   },
   "scripts": {
-    "test": "standard && echo 'no test specified'"
+    "test": "standard && echo 'no test specified'",
+    "perf": "node tests/perf.js"
   },
   "repository": {
     "type": "git",
