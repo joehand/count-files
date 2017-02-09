@@ -1,6 +1,6 @@
 {
   "name": "count-files",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "count files in a directory recursively",
   "main": "index.js",
   "bin": {
