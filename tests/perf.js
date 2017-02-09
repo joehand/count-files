@@ -1,5 +1,4 @@
 var path = require('path')
-var os = require('os')
 var bench = require('nanobench')
 var match = require('anymatch')
 
