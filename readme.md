@@ -58,6 +58,10 @@ That's all folks!
 
 ## Development
 
+* Run tests! `npm test`
+* Run performance thingy! `npm run perf`
+* Yay!
+
 Some basic performance testing in `tests/perf.js` and alternate implementations in `lib/`. I think I chose the fastest but didn't test all situations!
 
 ## License
