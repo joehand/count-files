@@ -1,23 +1,22 @@
 var path = require('path')
 var bench = require('nanobench')
 var match = require('anymatch')
+var counter = require('..')
 
 bench('IMPL1: file counting', function (b) {
-  var counter = require('..')
-  var dir = path.join(__dirname, '..')
+  var dir = path.join(__dirname, 'fixtures')
 
   b.start()
 
   counter(dir, function (err, stats) {
-    if (err) throw err
+    if (err) b.error(err)
     console.log('counted', stats)
     b.end()
   })
 })
 
 bench('file counting, ignore **/*.js', function (b) {
-  var counter = require('..')
-  var dir = path.join(__dirname, '..')
+  var dir = path.join(__dirname, 'fixtures')
   var ignore = function (file) {
     return match(['**/*.js'], file)
   }
@@ -25,7 +24,7 @@ bench('file counting, ignore **/*.js', function (b) {
   b.start()
 
   counter(dir, {ignore: ignore}, function (err, stats) {
-    if (err) throw err
+    if (err) b.error(err)
     console.log('counted', stats)
     b.end()
   })
