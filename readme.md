@@ -8,19 +8,6 @@ Ignore files in the count.
 
 ## Usage
 
-`count-files` has a very simple command line tool, use `npm install -g count-files` to install.
-
-```
-❯ count-files ./
-Counting files and directories in...
-/joe/node_modules/count-files
-
-Results:
- Files:  13
- Dirs:   4
- Size:   10 KB
-```
-
 In javascript, use it like so:
 
 ```javascript
@@ -36,11 +23,26 @@ setInterval(function () {
 }, 500)
 ```
 
+`count-files` also has a very simple command line tool, use `npm install -g count-files` to install.
+
+```
+❯ count-files ./
+Counting files and directories in...
+/joe/node_modules/count-files
+
+Results:
+ Files:  13
+ Dirs:   4
+ Size:   10 KB
+```
+
 ## API
 
 ### var stats = countFiles(dir, [opts], cb) { }
 
-Callback returns a stats object: `{files, dirs, bytes}`.
+`dir` can be a directory or a single file.
+
+Callback returns the completed `stats`: `{files, dirs, bytes}`.
 
 Options include:
 

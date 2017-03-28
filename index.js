@@ -13,8 +13,9 @@ function count (dir, opts, cb) {
     bytes: 0
   }
   fs.readdir(dir, function (err, list) {
+    if (err && err.code === 'ENOTDIR') return countFile() // Single file
     if (err) return cb(err)
-    // list = list.filter(ignore) seems a bit slower and makes API weird (b/c we need ignore = true)
+
     var pending = list.length
     if (!pending) return cb(null, totalStats)
     list.forEach(function (file) {
@@ -44,4 +45,14 @@ function count (dir, opts, cb) {
   })
 
   return totalStats
+
+  function countFile () {
+    // dir === a single file, just count that
+    fs.stat(dir, function (err, stat) {
+      if (err) return cb(err)
+      totalStats.files++
+      totalStats.bytes += stat.size
+      cb(null, totalStats)
+    })
+  }
 }

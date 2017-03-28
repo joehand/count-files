@@ -27,3 +27,14 @@ test('count files with ignore', function (t) {
     t.end()
   })
 })
+
+test('pass a file as dir', function (t) {
+  count(path.join(__dirname, 'fixtures', '1.txt'), function (err, stats) {
+    t.ifError(err, 'count error')
+    t.ok(stats, 'stats ok')
+    t.same(stats.files, 1, '1 files')
+    t.same(stats.dirs, 0, '0 dirs')
+    t.same(stats.bytes, 3, 'size')
+    t.end()
+  })
+})
