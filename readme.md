@@ -51,6 +51,7 @@ opts = {
   ignore: function (file) {
     return match(['**/*.js'], file) // return true to ignore file
   }
+  dereference: false // dereference any symlinks
 }
 ```
 

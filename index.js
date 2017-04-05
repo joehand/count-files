@@ -24,20 +24,20 @@ function count (dir, opts, cb) {
         if (!--pending) cb(null, totalStats)
         return
       }
-      fs.stat(file, function (err, stat) {
+      stat(file, function (err, st) {
         if (err) return cb(err)
-        if (stat && stat.isDirectory()) {
+        if (st && st.isDirectory()) {
           totalStats.dirs++
-          count(file, opts, function (err, stats) {
+          count(file, opts, function (err, cnt) {
             if (err) return cb(err)
-            totalStats.files += stats.files
-            totalStats.dirs += stats.dirs
-            totalStats.bytes += stats.bytes
+            totalStats.files += cnt.files
+            totalStats.dirs += cnt.dirs
+            totalStats.bytes += cnt.bytes
             if (!--pending) cb(null, totalStats)
           })
         } else {
           totalStats.files++
-          if (stat) totalStats.bytes += stat.size
+          if (st) totalStats.bytes += st.size
           if (!--pending) cb(null, totalStats)
         }
       })
@@ -46,12 +46,17 @@ function count (dir, opts, cb) {
 
   return totalStats
 
+  function stat (name, cb) {
+    if (opts.dereference) fs.stat(name, cb)
+    else fs.lstat(name, cb)
+  }
+
   function countFile () {
     // dir === a single file, just count that
-    fs.stat(dir, function (err, stat) {
+    stat(dir, function (err, st) {
       if (err) return cb(err)
       totalStats.files++
-      totalStats.bytes += stat.size
+      totalStats.bytes += st.size
       cb(null, totalStats)
     })
   }
