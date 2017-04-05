@@ -1,3 +1,4 @@
+var fs = require('fs')
 var path = require('path')
 var test = require('tape')
 var count = require('..')
@@ -36,5 +37,31 @@ test('pass a file as dir', function (t) {
     t.same(stats.dirs, 0, '0 dirs')
     t.same(stats.bytes, 3, 'size')
     t.end()
+  })
+})
+
+test('dereference option', function (t) {
+  var src = path.join(__dirname, 'fixtures', '1.txt')
+  var target = path.join(__dirname, 'fixtures', '2.txt')
+  fs.symlinkSync(src, target)
+  var linkStat = fs.lstatSync(target)
+
+  count(path.join(__dirname, 'fixtures'), function (err, stats) {
+    t.ifError(err, 'count error')
+    t.ok(stats, 'stats ok')
+    t.same(stats.files, 3, 'three files')
+    t.same(stats.dirs, 1, 'one dirs')
+    t.same(stats.bytes, 26 + linkStat.size, 'size')
+
+    count(path.join(__dirname, 'fixtures'), {dereference: true}, function (err, stats) {
+      t.ifError(err, 'count error')
+      t.ok(stats, 'stats ok')
+      t.same(stats.files, 3, 'three files')
+      t.same(stats.dirs, 1, 'one dirs')
+      t.same(stats.bytes, 29, 'size')
+
+      fs.unlinkSync(target)
+      t.end()
+    })
   })
 })
