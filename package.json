@@ -26,6 +26,7 @@
     "tape": "^4.6.3"
   },
   "dependencies": {
+    "neat-log": "^1.0.0",
     "prettier-bytes": "^1.0.3"
   }
 }
