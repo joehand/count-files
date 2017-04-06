@@ -38,9 +38,9 @@ Results:
 
 ## API
 
-### var stats = countFiles(dir, [opts], cb) { }
+### var stats = countFiles(src, [opts], cb) { }
 
-`dir` can be a directory or a single file.
+`src` can be a directory or a single file path. You can also pass a custom fs, e.g. [hyperdrive](https://github.com/mafintosh/hyperdrive) and path with: `{fs: customFs, name: dir}` (see tests for examples).
 
 Callback returns the completed `stats`: `{files, dirs, bytes}`.
 
