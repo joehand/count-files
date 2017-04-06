@@ -7,11 +7,13 @@ function count (dir, opts, cb) {
   if (typeof opts === 'function') return count(dir, {}, opts)
   opts = opts || {}
   if (!opts.ignore) opts.ignore = function () { return false }
-  var totalStats = {
+  var totalStats = opts._stats || {
     files: 0,
     dirs: 0,
     bytes: 0
   }
+  if (!opts._stats) opts._stats = totalStats
+
   fs.readdir(dir, function (err, list) {
     if (err && err.code === 'ENOTDIR') return countFile() // Single file
     if (err) return cb(err)
@@ -28,11 +30,9 @@ function count (dir, opts, cb) {
         if (err) return cb(err)
         if (st && st.isDirectory()) {
           totalStats.dirs++
+          // Uses opts._stats to add to total
           count(file, opts, function (err, cnt) {
             if (err) return cb(err)
-            totalStats.files += cnt.files
-            totalStats.dirs += cnt.dirs
-            totalStats.bytes += cnt.bytes
             if (!--pending) cb(null, totalStats)
           })
         } else {
