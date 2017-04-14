@@ -17,7 +17,7 @@ function count (src, opts, cb) {
   if (!opts.ignore) opts.ignore = function () { return false }
 
   src.fs.readdir(src.name, function (err, list) {
-    if (err && err.code === 'ENOTDIR' || !list.length) return countFile() // Single file
+    if (err && err.code === 'ENOTDIR' || (!list || !list.length)) return countFile() // Single file
     if (err) return cb(err)
 
     var pending = list.length

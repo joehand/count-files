@@ -124,6 +124,19 @@ test('count custom fs + single file', function (t) {
     })
   })
 })
+test('count custom fs one file', function (t) {
+  makeOneFileArchive(function (err, archive) {
+    t.ifError(err)
+    count({fs: archive, name: '/1.txt'}, function (err, stats) {
+      t.ifError(err, 'count error')
+      t.ok(stats, 'stats ok')
+      t.same(stats.files, 1, '1 files')
+      t.same(stats.dirs, 0, '0 dirs')
+      t.same(stats.bytes, 3, 'size')
+      t.end()
+    })
+  })
+})
 
 function makeArchive (cb) {
   var archive = hyperdrive(ram)
@@ -132,6 +145,20 @@ function makeArchive (cb) {
     if (err) return cb(err)
     archive.writeFile('dir/2.txt', fs.readFileSync(path.join(fixtures, 'dir', '2.txt')), done)
   })
+
+  function done (err) {
+    if (err) return cb(err)
+    archive.ready(function (err) {
+      if (err) return cb(err)
+      cb(null, archive)
+    })
+  }
+}
+
+function makeOneFileArchive (cb) {
+  var archive = hyperdrive(ram)
+  var fixtures = path.join(__dirname, 'fixtures')
+  archive.writeFile('1.txt', fs.readFileSync(path.join(fixtures, '1.txt')), done)
 
   function done (err) {
     if (err) return cb(err)
