@@ -7,7 +7,7 @@ function count (src, opts, cb) {
   if (typeof opts === 'function') return count(src, {}, opts)
 
   src = parse(src)
-  opts = opts || {}
+  opts = Object.assign({}, opts)
   var totalStats = opts._stats || {
     files: 0,
     dirs: 0,
